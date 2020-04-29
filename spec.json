@@ -1,0 +1,29 @@
+[
+    
+	{
+		"name": "sayHello",
+		"returns" : "Hello"
+	},
+	{
+		"name": "dataTransfer",
+		"params": {
+			"data": "dataName"
+		},
+		"returns" : 1
+    },
+    {
+		"name": "requestRatio",
+		"returns" : 0.5
+    },
+    {
+		"name": "requestResult",
+		"params": {
+			"data": "dataName"
+		},
+		"returns" : "imageName"
+    },
+    {
+		"name": "stopListening",
+		"returns" : 1
+    }  
+]

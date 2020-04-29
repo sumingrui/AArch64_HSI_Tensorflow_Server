@@ -2,17 +2,17 @@
 
 /*
 todo:
-1. 添加log函数 done
-2. tf_3dcnn
-3. 分离bf双边滤波和pad
+1. tf_3dcnn
+2. bf + pad
 
 
  */
-
 #include <stdio.h>
 #include <stdint.h>
 
 #include "tf.h"
+#include "utils.h"
+#include "share.h"
 #include "tensorflow/core/public/session.h"
 #include "tensorflow/core/platform/env.h"
 
@@ -46,7 +46,7 @@ bool ReadRawfile(string rawfilepath, cv::Mat &img_cube)
 		}
 		fclose(rawfile);
 		log(info, "load raw file success: " + rawfilepath);
-		return TRUE;
+		return true;
 	}
 	else
 	{
@@ -83,8 +83,10 @@ bool Draw_gt(string matfilepath, string key)
 }
  */
 
-int TF_2dcnn(string rawfilepath, string filename, string &sendImgPath)
+int TF_2dcnn(const char* c_rawfilepath, const char* c_filename, const char* c_sendImgPath)
 {
+	string rawfilepath(c_rawfilepath);
+	string filename(c_filename);
 	cv::Mat img_cube = cv::Mat::zeros(lines, samples, CV_64FC(224));
 	rawfilepath = rawfilepath + filename + ".raw";
 
@@ -101,7 +103,7 @@ int TF_2dcnn(string rawfilepath, string filename, string &sendImgPath)
 
 	img_cube.convertTo(img_cube, CV_32F);
 
-	//构建sess and model
+	// build seesion and model
 	Session *session;
 	Status status = NewSession(SessionOptions(), &session);
 	if (!status.ok())
@@ -128,7 +130,6 @@ int TF_2dcnn(string rawfilepath, string filename, string &sendImgPath)
 	vector<std::pair<string, Tensor>> inputs;
 	vector<Tensor> outputs;
 
-	// 赋值给tensor
 	typedef cv::Vec<float, 225> vec225f;
 	Tensor input_tensor(DT_FLOAT, TensorShape({lines * samples, 15, 15, 1}));
 	auto input_tensor_mapped = input_tensor.tensor<float, 4>();
@@ -177,7 +178,8 @@ int TF_2dcnn(string rawfilepath, string filename, string &sendImgPath)
 	//save opencv mat
 	save_xml(img_spectral, "./results/" + filename + ".xml");
 	save_imagesc(img_spectral, "./results/" + filename + ".jpg");
-	sendImgPath = "./results/" + filename + ".jpg";
+	string sendImgPath = "./results/" + filename + ".jpg";
+	c_sendImgPath = sendImgPath.c_str();
 
 	session->Close();
 
