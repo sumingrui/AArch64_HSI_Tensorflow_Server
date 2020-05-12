@@ -1,8 +1,6 @@
 #include "utils.h"
 #include <iostream>
 
-using std::cout;
-using std::endl;
 using std::vector;
 
 cv::Mat norm(cv::Mat mat)

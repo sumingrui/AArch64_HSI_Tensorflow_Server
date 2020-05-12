@@ -13,9 +13,7 @@ class AbstractStubServer : public jsonrpc::AbstractServer<AbstractStubServer>
         AbstractStubServer(jsonrpc::AbstractServerConnector &conn, jsonrpc::serverVersion_t type = jsonrpc::JSONRPC_SERVER_V2) : jsonrpc::AbstractServer<AbstractStubServer>(conn, type)
         {
             this->bindAndAddMethod(jsonrpc::Procedure("sayHello", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING,  NULL), &AbstractStubServer::sayHelloI);
-            this->bindAndAddMethod(jsonrpc::Procedure("dataTransfer", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_INTEGER, "data",jsonrpc::JSON_STRING, NULL), &AbstractStubServer::dataTransferI);
-            this->bindAndAddMethod(jsonrpc::Procedure("requestRatio", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_REAL,  NULL), &AbstractStubServer::requestRatioI);
-            this->bindAndAddMethod(jsonrpc::Procedure("requestResult", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "data",jsonrpc::JSON_STRING, NULL), &AbstractStubServer::requestResultI);
+            this->bindAndAddMethod(jsonrpc::Procedure("exeAlgorithm", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_INTEGER, "algorithm",jsonrpc::JSON_STRING,"computeRatio",jsonrpc::JSON_REAL,"rawfile",jsonrpc::JSON_STRING, NULL), &AbstractStubServer::exeAlgorithmI);
             this->bindAndAddMethod(jsonrpc::Procedure("stopListening", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_INTEGER,  NULL), &AbstractStubServer::stopListeningI);
         }
 
@@ -24,18 +22,9 @@ class AbstractStubServer : public jsonrpc::AbstractServer<AbstractStubServer>
             (void)request;
             response = this->sayHello();
         }
-        inline virtual void dataTransferI(const Json::Value &request, Json::Value &response)
+        inline virtual void exeAlgorithmI(const Json::Value &request, Json::Value &response)
         {
-            response = this->dataTransfer(request["data"].asString());
-        }
-        inline virtual void requestRatioI(const Json::Value &request, Json::Value &response)
-        {
-            (void)request;
-            response = this->requestRatio();
-        }
-        inline virtual void requestResultI(const Json::Value &request, Json::Value &response)
-        {
-            response = this->requestResult(request["data"].asString());
+            response = this->exeAlgorithm(request["algorithm"].asString(), request["computeRatio"].asDouble(), request["rawfile"].asString());
         }
         inline virtual void stopListeningI(const Json::Value &request, Json::Value &response)
         {
@@ -43,9 +32,7 @@ class AbstractStubServer : public jsonrpc::AbstractServer<AbstractStubServer>
             response = this->stopListening();
         }
         virtual std::string sayHello() = 0;
-        virtual int dataTransfer(const std::string& data) = 0;
-        virtual double requestRatio() = 0;
-        virtual std::string requestResult(const std::string& data) = 0;
+        virtual int exeAlgorithm(const std::string& algorithm, double computeRatio, const std::string& rawfile) = 0;
         virtual int stopListening() = 0;
 };
 

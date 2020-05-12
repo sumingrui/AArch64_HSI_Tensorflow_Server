@@ -1,13 +1,13 @@
 #ifndef MYSTUBSERVER_H_
 #define MYSTUBSERVER_H_
 
-#define USE_CXX11_ABI 1
-
 #include "abstractstubserver.h"
 #include "tf.h"
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdio.h>
 #include <string>
+
+#include <iostream>
 
 using namespace jsonrpc;
 using namespace std;
@@ -18,9 +18,7 @@ public:
     MyStubServer(AbstractServerConnector &connector);
 
     virtual string sayHello();
-    virtual int dataTransfer(const string &data);
-    virtual double requestRatio();
-    virtual string requestResult(const string &data);
+    virtual int exeAlgorithm(const string &algorithm, double computeRatio, const string &rawfile);
     virtual int stopListening();
 };
 
@@ -33,29 +31,18 @@ string MyStubServer::sayHello()
     return "Server has Connected";
 }
 
-int MyStubServer::dataTransfer(const string &data)
+int MyStubServer::exeAlgorithm(const string &algorithm, double computeRatio, const string &rawfile)
 {
-    //检测data文件是否存在
-    if (!access(data.c_str(),F_OK | R_OK))
+    string taskfile = "/repos/tf_server/AArch64_HSI_Tensorflow_Server/dataset/" + rawfile;
+    if (!access(taskfile.c_str(), F_OK | R_OK))
     {
-        //tf_cnn
-        const char* sendImgPath;
-        TF_2dcnn("/repos/tf_server/AArch64_HSI_Tensorflow_Server/dataset/","newrawSinglefile20190711140909", sendImgPath);
-        //log(info, "Result Image path: " + sendImgPath);
-        return 1;
+        //tf_2dcnn
+        if (algorithm.compare("tf_2dcnn") == 0)
+        {
+            TF_2dcnn("/repos/tf_server/AArch64_HSI_Tensorflow_Server/dataset/", rawfile.substr(0, rawfile.length() - 4).c_str(), computeRatio);
+            return 1;
+        }
     }
-}
-
-double MyStubServer::requestRatio()
-{
-    //返回识别比率
-    return 0.8;
-}
-
-string MyStubServer::requestResult(const string &data)
-{
-    //scp发送图片，返回图片名称
-    return "image.jpg";
 }
 
 int MyStubServer::stopListening()

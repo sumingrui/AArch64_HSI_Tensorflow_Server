@@ -1,29 +1,19 @@
 [
-    
 	{
-		"name": "sayHello",
-		"returns" : "Hello"
+			"name": "sayHello",
+			"returns" : "Hello"
 	},
 	{
-		"name": "dataTransfer",
-		"params": {
-			"data": "dataName"
-		},
-		"returns" : 1
-    },
-    {
-		"name": "requestRatio",
-		"returns" : 0.5
-    },
-    {
-		"name": "requestResult",
-		"params": {
-			"data": "dataName"
-		},
-		"returns" : "imageName"
-    },
-    {
-		"name": "stopListening",
-		"returns" : 1
-    }  
+			"name": "exeAlgorithm",
+			"params": {
+					"computeRatio": 1.0,
+					"rawfile": "12345.raw",
+					"algorithm":"tf_2dcnn"
+			},
+			"returns" : 1
+	},
+	{
+			"name": "stopListening",
+			"returns" : 1
+	}
 ]
